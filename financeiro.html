@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang='pt-BR'>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>Financeiro Pro</title>
+<style>body{font-family:Arial,sans-serif;background:#f3f4f6;margin:0;padding:20px}.wrap{max-width:1100px;margin:auto}.card{background:#fff;padding:16px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.08);margin-bottom:16px}.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}input,select,button{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px}button{background:#111;color:#fff;cursor:pointer}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:8px 0}.muted{color:#666;font-size:14px}</style>
+</head><body><div class='wrap'>
+<h1>Financeiro Pro</h1>
+<div class='grid g2'>
+<div class='card'><h3>Novo Cliente</h3><input id='nome' placeholder='Nome'><input id='contato' placeholder='Contato'><button onclick='addCliente()'>Adicionar Cliente</button></div>
+<div class='card'><h3>Novo Serviço</h3><select id='cliente'></select><input id='desc' placeholder='Descrição'><input id='valor' type='number' placeholder='Valor'><button onclick='addServico()'>Registrar Serviço</button></div>
+</div>
+<div class='grid g2'>
+<div class='card'><h3>Clientes</h3><input id='busca' placeholder='Buscar cliente' oninput='render()'><div id='clientes'></div></div>
+<div class='card'><h3>Histórico</h3><div id='servicos'></div></div>
+</div>
+<div class='card'><h3>Total Geral: R$ <span id='total'>0.00</span></h3></div>
+</div>
+<script>
+let clientes=JSON.parse(localStorage.getItem('clientes')||'[]');
+let servicos=JSON.parse(localStorage.getItem('servicos')||'[]');
+function save(){localStorage.setItem('clientes',JSON.stringify(clientes));localStorage.setItem('servicos',JSON.stringify(servicos));}
+function addCliente(){const nome=v('nome');if(!nome)return;clientes.push({id:Date.now()+'',nome,contato:v('contato')});save();clear('nome','contato');render();}
+function addServico(){if(!v('cliente')||!v('desc')||!v('valor'))return;servicos.unshift({id:Date.now()+'',clienteId:v('cliente'),desc:v('desc'),valor:+v('valor'),data:new Date().toLocaleDateString('pt-BR')});save();clear('desc','valor');render();}
+function delCliente(id){clientes=clientes.filter(x=>x.id!=id);servicos=servicos.filter(x=>x.clienteId!=id);save();render();}
+function delServico(id){servicos=servicos.filter(x=>x.id!=id);save();render();}
+function v(id){return document.getElementById(id).value.trim()}
+function clear(){[...arguments].forEach(i=>document.getElementById(i).value='')}
+function render(){document.getElementById('cliente').innerHTML='<option value="">Selecione</option>'+clientes.map(c=>`<option value='${c.id}'>${c.nome}</option>`).join('');const busca=v('busca').toLowerCase();document.getElementById('clientes').innerHTML=clientes.filter(c=>c.nome.toLowerCase().includes(busca)).map(c=>`<div class='row'><div><b>${c.nome}</b><div class='muted'>${c.contato}</div><div>Total: R$ ${totalCliente(c.id).toFixed(2)}</div></div><button onclick="delCliente('${c.id}')">X</button></div>`).join('');document.getElementById('servicos').innerHTML=servicos.map(s=>{let c=clientes.find(x=>x.id==s.clienteId);return `<div class='row'><div><b>${c?c.nome:'Removido'}</b><div class='muted'>${s.desc} • ${s.data}</div><div>R$ ${s.valor.toFixed(2)}</div></div><button onclick="delServico('${s.id}')">X</button></div>`}).join('');document.getElementById('total').innerText=servicos.reduce((a,b)=>a+b.valor,0).toFixed(2)}
+function totalCliente(id){return servicos.filter(s=>s.clienteId==id).reduce((a,b)=>a+b.valor,0)}render();
+</script></body></html>
