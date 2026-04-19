@@ -5,7 +5,7 @@
 <title>Financeiro Pro</title>
 <style>body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b);color:#e5e7eb;margin:0;padding:20px}.wrap{max-width:1100px;margin:auto}.card{background:rgba(255,255,255,.08);backdrop-filter:blur(8px);padding:16px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.08);margin-bottom:16px}.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}input,select,button{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px}button{background:linear-gradient(90deg,#22c55e,#16a34a);color:#fff;cursor:pointer;font-weight:bold;border:none}button:hover{opacity:.92}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:8px 0}.muted{color:#666;font-size:14px}</style>
 </head><body><div class='wrap'>
-<h1 style='font-size:38px;margin-bottom:10px'>💎 Financeiro Pro Premium</h1><p class='muted' style='color:#cbd5e1'>Sistema profissional para gestão de clientes, serviços e faturamento.</p>
+<h1 style='font-size:38px;margin-bottom:10px'>🏢 Financeiro Pro Empresa</h1><p class='muted' style='color:#cbd5e1'>Plataforma empresarial para gestão financeira, clientes, produtividade e crescimento.</p>
 <div class='grid g2'>
 <div class='card'><h3>Novo Cliente</h3><input id='nome' placeholder='Nome'><input id='contato' placeholder='Contato'><button onclick='addCliente()'>Adicionar Cliente</button></div>
 <div class='card'><h3>Novo Serviço</h3><select id='cliente'></select><input id='desc' placeholder='Descrição'><input id='valor' type='number' placeholder='Valor'><button onclick='addServico()'>Registrar Serviço</button></div>
@@ -15,7 +15,7 @@
 <div class='card'><h3>Histórico</h3><div id='servicos'></div></div>
 </div>
 <div class='card'><h3>Total Geral: R$ <span id='total'>0.00</span></h3></div>
-<div class='grid g2'><div class='card'><h3>📈 Metas</h3><p class='muted'>Acompanhe seu crescimento financeiro mensal.</p><progress id='meta' max='100' value='0' style='width:100%'></progress></div><div class='card'><h3>🔒 Acesso</h3><input id='senha' type='password' placeholder='Senha visual'><button onclick='alert("Área premium em evolução")'>Entrar</button></div></div></div>
+<div class='grid g2'><div class='card'><h3>📊 Dashboard Executivo</h3><p class='muted'>Visão estratégica do negócio em tempo real.</p></div><div class='card'><h3>📈 Metas</h3><p class='muted'>Acompanhe seu crescimento financeiro mensal.</p><progress id='meta' max='100' value='0' style='width:100%'></progress></div><div class='card'><h3>🔒 Acesso</h3><input id='senha' type='password' placeholder='Senha visual'><button onclick='if(document.getElementById('senha').value==='Computer034'){alert('Acesso liberado')}else{alert('Senha incorreta')}'>Entrar</button></div></div></div>
 <script>
 let clientes=JSON.parse(localStorage.getItem('clientes')||'[]');
 let servicos=JSON.parse(localStorage.getItem('servicos')||'[]');
@@ -29,4 +29,3 @@ function clear(){[...arguments].forEach(i=>document.getElementById(i).value='')}
 function render(){document.getElementById('cliente').innerHTML='<option value="">Selecione</option>'+clientes.map(c=>`<option value='${c.id}'>${c.nome}</option>`).join('');const busca=v('busca').toLowerCase();document.getElementById('clientes').innerHTML=clientes.filter(c=>c.nome.toLowerCase().includes(busca)).map(c=>`<div class='row'><div><b>${c.nome}</b><div class='muted'>${c.contato}</div><div>Total: R$ ${totalCliente(c.id).toFixed(2)}</div></div><button onclick="delCliente('${c.id}')">X</button></div>`).join('');document.getElementById('servicos').innerHTML=servicos.map(s=>{let c=clientes.find(x=>x.id==s.clienteId);return `<div class='row'><div><b>${c?c.nome:'Removido'}</b><div class='muted'>${s.desc} • ${s.data}</div><div>R$ ${s.valor.toFixed(2)}</div></div><button onclick="delServico('${s.id}')">X</button></div>`}).join('');document.getElementById('total').innerText=servicos.reduce((a,b)=>a+b.valor,0).toFixed(2)}
 function totalCliente(id){return servicos.filter(s=>s.clienteId==id).reduce((a,b)=>a+b.valor,0)}render();
 </script></body></html>
-
